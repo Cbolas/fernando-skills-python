@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0](https://github.com/Cbolas/fernando-skills-python/compare/v0.2.0...v0.3.0) (2026-10-14)
+
+
+### Features
+
+* Introduce fernando-skills CLI for managing spec-driven skills ([4de65b6](https://github.com/Cbolas/fernando-skills-python/commit/4de65b6c5bd42615889a362c16f32d7fc62365bc))
+* **spec:** introduce AutoCreateBranch configuration for branch management ([1273a5c](https://github.com/Cbolas/fernando-skills-python/commit/1273a5c1a152711f024c0afc336c2cb2a3b019cd))
+
+
+### Bug Fixes
+
+* remove shell command directives to pass Gen Agent Trust Hub audit ([b5d4402](https://github.com/Cbolas/fernando-skills-python/commit/b5d4402e3ffe6305971104882487192d0e603a53))
+* remove shell injection vector in spec-impl Phase 2 ([b946f46](https://github.com/Cbolas/fernando-skills-python/commit/b946f46f752e71a74c85080a85ce20c478d8df99))
+* **spec:** improve metadata formatting in spec template ([96e4c64](https://github.com/Cbolas/fernando-skills-python/commit/96e4c64f04c8992260fe1e24c96fc05a9981d47e))
+* **spec:** stop after saving spec and point to /spec-impl ([1cbde98](https://github.com/Cbolas/fernando-skills-python/commit/1cbde987627171305411d2be20ff0caad2739c20))
+* use single quotes for argument-hint in spec SKILL.md ([7f6252a](https://github.com/Cbolas/fernando-skills-python/commit/7f6252a5f16a05cc4b4469366697aaf892809f23))
+
 ## [0.2.0](https://github.com/Klerith/fernando-skills/compare/v0.1.2...v0.2.0) (2026-06-29)
 
 
