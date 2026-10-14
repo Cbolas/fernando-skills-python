@@ -34,13 +34,13 @@ if [ "$TARGET" = "$SKILLS_REPO" ]; then
 fi
 
 skill_dirs() {
-  find "$SKILLS_REPO/skills" -name SKILL.md -not -path '*/node_modules/*' -not -path '*/deprecated/*' -print0 |
-    xargs -0 -n1 dirname
+  find "$SKILLS_REPO/fernando_skills/skills" -name SKILL.md -not -path '*/node_modules/*' -not -path '*/deprecated/*' -print0 |
+    xargs -0 -n1 dirname | sort
 }
 
 # Strip YAML frontmatter from a SKILL.md, returning the body.
 skill_body() {
-  awk 'BEGIN{f=0} /^---$/{f++; next} f>=2{print}' "$1"
+  awk 'BEGIN{f=0} /^---$/ && f<2 {f++; next} f>=2{print}' "$1"
 }
 
 # Read a frontmatter field. Usage: fm <file> <field>

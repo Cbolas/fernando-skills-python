@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fernando-skills"
+version = "0.2.0"
+description = "Spec-driven slash-command skills (/spec, /spec-impl) for OpenCode, Claude Code, Cursor, Codex, and Antigravity. Node-free fork of Klerith/fernando-skills."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Cbolas" }]
+keywords = ["spec", "skills", "opencode", "claude", "agents", "llm"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Documentation",
+]
+
+[project.urls]
+Homepage = "https://github.com/Cbolas/fernando-skills-python"
+Upstream = "https://github.com/Klerith/fernando-skills"
+
+[project.scripts]
+fernando-skills = "fernando_skills.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools]
+packages = ["fernando_skills"]
+
+[tool.setuptools.package-data]
+fernando_skills = [
+  "skills/*",
+  "skills/*/*",
+  "skills/*/*/*",
+  "skills/*/*/*/*",
+]

@@ -62,13 +62,13 @@ The concrete structures that appear or change. Use real code, not abstract pseud
 ```markdown
 ## Data model
 
-\`\`\`js
-// Game state
-const state = {
-level: 1,
-score: 0,
-highScores: [/* { score, level, date } */],
-};
+\`\`\`python
+# Game state
+@dataclass
+class GameState:
+    level: int = 1
+    score: int = 0
+    high_scores: list[HighScore] = field(default_factory=list)  # {score, level, date}
 \`\`\`
 
 Conventions:
@@ -109,9 +109,9 @@ Boolean checklist. Each item can be verified with yes or no.
 ```markdown
 ## Acceptance criteria
 
-- [ ] The game loads without errors in the console.
+- [ ] The game starts without errors (`python -m game`).
 - [ ] Breaking a brick adds exactly 10 points.
-- [ ] Reloading the page preserves the high-scores.
+- [ ] Restarting the process preserves the high-scores.
 ```
 
 **Anti-patterns to avoid:**
@@ -130,9 +130,9 @@ The section that has the most value 3 months from now. Capture **what you consid
 ```markdown
 ## Decisions
 
-- **Yes:** localStorage for persistence. Fits in <5MB and we don't need queries.
-- **No:** IndexedDB. Overengineering for this case.
-- **Yes:** versioned key (`save:v1`). Lets us migrate the schema later without breaking.
+- **Yes:** a JSON file on disk (`data/save.json`) for persistence. Small payload and we don't need queries.
+- **No:** SQLite. Overengineering for this case.
+- **Yes:** a `schema_version` field inside the save file. Lets us migrate the format later without breaking.
 - **No:** cloud sync. Goes in another spec if it ever lands.
 ```
 
@@ -149,8 +149,8 @@ Only when there are non-obvious risks. Simple table:
 
 | Risk                                  | Mitigation                                                                  |
 | ------------------------------------- | --------------------------------------------------------------------------- |
-| localStorage disabled in private mode | Fallback to in-memory object. The game still runs, it just doesn't persist. |
-| Future incompatible schema            | Key includes `:v1`. Migration documented in `persistence.js`.               |
+| Save directory not writable (permissions, read-only filesystem) | Fallback to in-memory state. The game still runs, it just doesn't persist. |
+| Future incompatible schema            | `schema_version` field in the save file. Migration documented in `persistence.py`. |
 ```
 
 For small specs or very contained features, omit it.
@@ -176,7 +176,7 @@ Each one of those, if it lands, goes in its own spec.
 ## Global rules about the whole document
 
 - **One sentence per idea.** If a sentence has two commas and a semicolon, split it.
-- **Concrete names.** If you say "the levels module", say `src/levels.js`. If you say "a key", give the exact string.
+- **Concrete names.** If you say "the levels module", say `src/levels.py`. If you say "a key", give the exact string.
 - **No TODOs.** A TODO in a spec means the decision was not made. Make it or note it as a pending decision with a reason.
 - **No long executable code.** The spec describes; the code is written afterwards. Short snippets to illustrate data structures are fine; full functions are not.
 - **Standard markdown.** No weird extensions. It must render on GitHub without surprises.

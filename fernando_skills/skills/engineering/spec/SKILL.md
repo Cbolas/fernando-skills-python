@@ -59,7 +59,7 @@ Ask questions in blocks of 3 to 5 at a time (not one single question followed by
 
 **How to phrase the questions:**
 
-- Use concrete questions, not open-ended ones. ❌ "How do you imagine persistence?" → ✅ "Is persistence localStorage, IndexedDB, or a JSON file on disk?"
+- Use concrete questions, not open-ended ones. ❌ "How do you imagine persistence?" → ✅ "Is persistence a JSON file on disk, SQLite, or environment variables?"
 - When you offer options, give 2–4, mark which one is your recommendation and why.
 - If your agent exposes a native multiple-choice question tool (in Claude Code: `AskUserQuestion`), use it for these blocks instead of writing the options as prose — the user picks instead of typing. Put your recommendation first and label it. Fall back to a numbered markdown list when no such tool exists.
 - If you spot an answer that would open Pandora's box (e.g. "and we also want multiplayer"), point out that it deserves its own spec and ask whether we leave it out of this one's scope.
@@ -151,9 +151,9 @@ Example of a well-formed block:
 
 > Before writing the data model I need to clarify three things:
 >
-> 1. **Persistence.** localStorage, IndexedDB, or a JSON file on disk? Recommendation: localStorage if the data fits in <5MB and does not need queries.
-> 2. **Schema versioning.** What happens when the format changes? Options: (a) version prefix in the key, (b) ignore and rebuild, (c) migrate on load.
-> 3. **Privacy.** Is the data sensitive? If yes, is it encrypted? Is it deleted on logout?
+> 1. **Persistence.** A JSON file on disk, SQLite, or environment variables? Recommendation: SQLite if you need queries or migrations; a JSON file if the data is small and needs no queries.
+> 2. **Schema versioning.** What happens when the format changes? Options: (a) a `schema_version` field with migration on load, (b) ignore and rebuild, (c) a versioned file name (`save-v1.json`).
+> 3. **Privacy.** Is the data sensitive? If yes, is it encrypted at rest? Are file permissions restricted? Is it deleted on logout?
 
 ## Arguments
 

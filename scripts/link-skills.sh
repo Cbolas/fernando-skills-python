@@ -20,7 +20,7 @@ fi
 
 mkdir -p "$DEST"
 
-find "$REPO/skills" -name SKILL.md -not -path '*/node_modules/*' -not -path '*/deprecated/*' -print0 |
+find "$REPO/fernando_skills/skills" -name SKILL.md -not -path '*/node_modules/*' -not -path '*/deprecated/*' -print0 |
 while IFS= read -r -d '' skill_md; do
   src="$(dirname "$skill_md")"
   name="$(basename "$src")"
