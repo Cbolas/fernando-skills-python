@@ -4,4 +4,4 @@ set -euo pipefail
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 
 cd "$REPO"
-find skills -name SKILL.md -not -path '*/node_modules/*' | sort
+find fernando_skills/skills -name SKILL.md -not -path '*/node_modules/*' | sort

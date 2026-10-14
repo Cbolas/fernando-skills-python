@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Purpose
 
-This repo is a workspace for authoring Claude Code slash-command skills, specifically for a spec-driven development workflow. Skills are written in **English**, and they instruct the agent to reply in whatever language the user's prompt used.
+This repo is a workspace for authoring slash-command skills for OpenCode, Claude Code, and other LLM agents, specifically for a spec-driven development workflow. Skills are written in **English**, and they instruct the agent to reply in whatever language the user's prompt used.
 
 `reference/` is a vendored copy of `mattpocock/skills` kept as a structural/style reference — do not edit it during normal work. Its own `reference/CLAUDE.md` governs that subtree.
 
 ## Skill authoring conventions
 
-Each skill lives under `skills/<bucket>/<name>/` (e.g. `skills/engineering/spec/`) as a directory containing at minimum a `SKILL.md`. Buckets group skills by domain (`engineering/`, future: `productivity/`, `misc/`, etc.). The YAML frontmatter of `SKILL.md` must declare:
+Each skill lives under `fernando_skills/skills/<bucket>/<name>/` (e.g. `fernando_skills/skills/engineering/spec/`) as a directory containing at minimum a `SKILL.md`. A `skills` symlink at the repo root points there, so both paths work. Buckets group skills by domain (`engineering/`, future: `productivity/`, `misc/`, etc.). The YAML frontmatter of `SKILL.md` must declare:
 
 ```yaml
 ---
@@ -21,7 +21,7 @@ argument-hint: [hint]
 ---
 ```
 
-Use `allowed-tools` in frontmatter to restrict what Bash commands a skill may run (see `skills/engineering/spec-impl/SKILL.md` for an example that limits to read-only git/fs).
+Use `allowed-tools` in frontmatter to restrict what Bash commands a skill may run (see `fernando_skills/skills/engineering/spec-impl/SKILL.md` for an example that limits to read-only git/fs).
 
 Use `!`command``shell snippets inside`SKILL.md` to inject live repo state at skill-load time (e.g., current branch, available specs). Embed them at the top of the skill body before the instructions.
 
@@ -67,13 +67,21 @@ At completion, remind the user to verify acceptance criteria and mark the spec `
 
 ## Distribution
 
-The repo is consumed by users in two ways:
+The repo ships as a Python package (no Node anywhere) and is consumed by users in two ways:
 
-1. **skills.sh** (`npx skills@latest add Klerith/fernando-skills`) — auto-discovers public GitHub repos with `skills/**/SKILL.md`. Just push to GitHub.
-2. **Multi-agent installer** (`scripts/install-to-agent.sh <agent>`) — translates skills for Cursor (`.cursor/rules/*.mdc`), Codex (`AGENTS.md` block + `.codex/skills/`), and Antigravity (`.antigravity/skills/`). Run from the _target_ repo, not this one.
+1. **Python CLI (canonical)** — `pip install git+https://github.com/Cbolas/fernando-skills-python.git` provides `fernando-skills install <agent>` (`opencode`, `claude`, `cursor`, `codex`, `antigravity`; `opencode`/`claude` also accept `--global`). The `opencode` target copies into `.opencode/skills/` and translates the frontmatter (`metadata.opencode/slash: "true"` makes `/spec` and `/spec-impl` real TUI commands; `!`command`` injections become run-it-now instructions). Sources: `fernando_skills/cli.py`, `fernando_skills/installer.py`, `fernando_skills/opencode.py`.
+2. **Bash fallback** (`scripts/install-to-agent.sh <agent>`) — zero dependencies (git + bash); same behavior for `claude`/`cursor`/`codex`/`antigravity` (tests enforce byte parity). No `opencode` target — for OpenCode use the Python CLI. Run from the _target_ repo, not this one.
 
-`scripts/link-skills.sh` symlinks every skill into `~/.claude/skills` for local development.
+When changing installer behavior, update both `fernando_skills/installer.py` and `scripts/install-to-agent.sh` together — `tests/test_installer.py::test_python_installer_matches_bash_installer` fails if they drift.
 
-## No build or test commands
+`scripts/link-skills.sh` symlinks every skill into `~/.claude/skills` for local development (OpenCode reads that directory too).
 
-There is no package manager, build step, or test suite. All skills are plain Markdown files.
+## Build and test commands
+
+```bash
+python3 -m pip install -e .          # editable install; gives you the fernando-skills CLI
+python3 -m pytest                    # test suite (installer parity, opencode translation, uninstall)
+bash -n scripts/*.sh                 # syntax-check the bash scripts after editing them
+```
+
+Runtime dependencies: none (stdlib only). Dev dependencies: `pytest`. Bump the version in `pyproject.toml` and `fernando_skills/__init__.py` together when releasing — release-please does not manage the Python package version.

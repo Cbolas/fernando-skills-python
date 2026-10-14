@@ -1,21 +1,24 @@
 [English](README.md) · [Español](README-es.md)
 
 <p align="center">
-  <h1 align="center">Spec-Driven Skills para Claude Code</h1>
+  <h1 align="center">Spec-Driven Skills para OpenCode y Claude Code</h1>
   <p align="center">Planifica la feature. Apruébala. Impleméntala paso a paso.</p>
 </p>
 
 <p align="center">
-  <img alt="Licencia" src="https://img.shields.io/github/license/Klerith/fernando-skills">
-  <img alt="Último release" src="https://img.shields.io/github/v/release/Klerith/fernando-skills">
-  <img alt="GitHub Stars" src="https://img.shields.io/github/stars/Klerith/fernando-skills?style=social">
+  <img alt="Licencia" src="https://img.shields.io/github/license/Cbolas/fernando-skills-python">
+  <img alt="Último release" src="https://img.shields.io/github/v/release/Cbolas/fernando-skills-python">
+  <img alt="GitHub Stars" src="https://img.shields.io/github/stars/Cbolas/fernando-skills-python?style=social">
   <img alt="Skills" src="https://img.shields.io/badge/skills-2-blue">
 </p>
+
+> Fork sin Node de [Klerith/fernando-skills](https://github.com/Klerith/fernando-skills): se instala con `pip` (solo Python), prioriza OpenCode y usa ejemplos en Python.
 
 ## Inicio rápido
 
 ```bash
-npx skills@latest add Klerith/fernando-skills
+pip install git+https://github.com/Cbolas/fernando-skills-python.git
+fernando-skills install opencode
 ```
 
 ## Skills
@@ -124,7 +127,7 @@ El "no entra" es tan importante como el "entra". Sin él, los límites son borro
 
 ### 3. Modelo de datos
 
-Las estructuras y nombres concretos. Si dices "el módulo de niveles", di `src/levels.js`. Si dices "una clave", da el string exacto. Esta sección es la que más se cita después en otros specs y skills.
+Las estructuras y nombres concretos. Si dices "el módulo de niveles", di `src/levels.py`. Si dices "una clave", da el string exacto. Esta sección es la que más se cita después en otros specs y skills.
 
 ### 4. Plan de implementación ordenado
 
@@ -181,7 +184,7 @@ Cuatro patrones de uso que distinguen al método funcionando bien del método co
 
 ### 1. En la fase de descripción, describe el problema, no la solución
 
-❌ _"Añade un array de niveles cargados desde JSON, una función `loadLevel()`, y persistencia con localStorage versionado."_
+❌ _"Añade una lista de niveles cargados desde JSON, una función `load_level()`, y persistencia con un `data/save.json` versionado."_
 
 Eso ya es un spec mal escrito por ti. Claude solo lo va a formatear.
 
@@ -210,41 +213,60 @@ Esa separación es lo que evita el scope creep silencioso.
 
 ## Instalación
 
-### Opción 1 — skills.sh (recomendado, Claude Code)
+### Opción 1 — CLI de Python (recomendado, sin Node)
 
 ```bash
-npx skills@latest add Klerith/fernando-skills
+pip install git+https://github.com/Cbolas/fernando-skills-python.git
+cd ~/tu-proyecto
+fernando-skills install <agent>
 ```
+
+`<agent>` puede ser `opencode`, `claude`, `cursor`, `codex` o `antigravity`.
+
+| Agente        | Qué se escribe                                                                                                                                     |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `opencode`    | Copia cada skill en `.opencode/skills/` y traduce el frontmatter: `/spec` y `/spec-impl` pasan a ser comandos slash en el TUI (vía `metadata.opencode/slash`), y las inyecciones `!`comando`` de Claude se convierten en instrucciones de ejecutar el comando ahora |
+| `claude`      | Copia cada skill en `.claude/skills/` (del proyecto)                                                                                               |
+| `cursor`      | Genera archivos `.cursor/rules/<name>.mdc`. Se invocan con `@spec`, `@spec-impl`, etc.                                                            |
+| `codex`       | Añade un bloque `## Skills` a `AGENTS.md` y copia los skills en `.codex/skills/`                                                                   |
+| `antigravity` | Copia los skills en `.antigravity/skills/`                                                                                                         |
+
+`opencode` y `claude` también aceptan `--global` (instalación a nivel de usuario en `~/.config/opencode/skills/` o `~/.claude/skills/`).
 
 Para desinstalar:
 
 ```bash
-npx skills@latest remove Klerith/fernando-skills
+fernando-skills uninstall <agent>
 ```
 
+> Cursor y Codex no soportan de forma nativa el frontmatter `argument-hint` ni `disable-model-invocation` de Claude Code. El instalador elimina esos campos y conserva el cuerpo — el workflow es el mismo, solo cambia el disparador.
+>
+> OpenCode también lee `.claude/skills/` de forma nativa, pero el target `opencode` dedicado es el que convierte los skills en comandos reales `/spec` y `/spec-impl`.
 
-### Opción 2 — Otros agentes (Cursor, Codex, Antigravity)
+### Opción 2 — Fallback en bash (cero dependencias: git + bash)
 
 ```bash
-git clone https://github.com/Klerith/fernando-skills ~/.fernando-skills
+git clone https://github.com/Cbolas/fernando-skills-python ~/.fernando-skills
 cd ~/tu-proyecto
 ~/.fernando-skills/scripts/install-to-agent.sh <agent>
 ```
 
-`<agent>` puede ser `claude`, `cursor`, `codex` o `antigravity`. Ver [README.md](./README.md#installation) para detalles.
+`<agent>` puede ser `claude`, `cursor`, `codex` o `antigravity`. Para OpenCode usa el CLI de Python de arriba (o el target `claude` — OpenCode también descubre `.claude/skills/`, aunque sin comandos slash).
+
+> El upstream [Klerith/fernando-skills](https://github.com/Klerith/fernando-skills) también se distribuye con `npx skills@latest add Klerith/fernando-skills` (skills.sh). Ese camino requiere Node; este fork existe para funcionar sin él.
 
 ### Opción 3 — Manual
 
 ```bash
 # Personal (todos tus proyectos)
 mkdir -p ~/.claude/skills
-cp -r skills/engineering/spec ~/.claude/skills/
-cp -r skills/engineering/spec-impl ~/.claude/skills/
+cp -r fernando_skills/skills/engineering/spec ~/.claude/skills/
+cp -r fernando_skills/skills/engineering/spec-impl ~/.claude/skills/
 
 # O de proyecto (versionado en git)
 mkdir -p .claude/skills
-cp -r skills/engineering/spec .claude/skills/
-cp -r skills/engineering/spec-impl .claude/skills/
+cp -r fernando_skills/skills/engineering/spec .claude/skills/
+cp -r fernando_skills/skills/engineering/spec-impl .claude/skills/
 ```
 
 Para que el método funcione, también necesitas crear la carpeta `specs/` en la raíz del proyecto:

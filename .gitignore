@@ -4,3 +4,10 @@ reference/*
 .DS_Store
 node_modules/
 *.log
+
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+build/
+dist/
